@@ -40,6 +40,9 @@
   $_SESSION['username'] = $users['username'];
   $_SESSION['role']     = $users['role'];
 
+  // Pastikan session tersimpan sebelum redirect
+  session_write_close();
+
   // Redirect ke dashboard
   header('Location: /sim_persedian_barang/pages/dashboard.php');
   exit();
