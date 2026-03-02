@@ -13,11 +13,11 @@ $stok_habis = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM barang 
 
 // Query 5 transaksi terakhir
 $query_terakhir = mysqli_query($conn, "
-    SELECT b.nama_barang, bm.jumlah_masuk AS jumlah, bm.tanggal_masuk AS tanggal, 'Masuk' AS tipe
+    SELECT b.nama_barang, bm.jumlah_barang_masuk AS jumlah, bm.tanggal_masuk AS tanggal, 'Masuk' AS tipe
     FROM barang_masuk bm
     JOIN barang b ON bm.id_barang = b.id_barang
     UNION ALL
-    SELECT b.nama_barang, bk.jumlah_keluar AS jumlah, bk.tanggal_keluar AS tanggal, 'Keluar' AS tipe
+    SELECT b.nama_barang, bk.jumlah_barang_keluar AS jumlah, bk.tanggal_keluar AS tanggal, 'Keluar' AS tipe
     FROM barang_keluar bk
     JOIN barang b ON bk.id_barang = b.id_barang
     ORDER BY tanggal DESC
