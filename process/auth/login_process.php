@@ -22,23 +22,23 @@
   }
 
   // Cari user di database
-  $stmt = mysqli_prepare($conn, "SELECT user_id, username, password, role FROM user WHERE username = ?");
+  $stmt = mysqli_prepare($conn, "SELECT id_user, username, password, role FROM users WHERE username = ?");
   mysqli_stmt_bind_param($stmt, 's', $username);
   mysqli_stmt_execute($stmt);
   $result = mysqli_stmt_get_result($stmt);
-  $user = mysqli_fetch_assoc($result);
+  $users = mysqli_fetch_assoc($result);
 
   // Cek apakah user ditemukan dan password cocok
-  if (!$user || !password_verify($password, $user['password'])) {
+  if (!$users || !password_verify($password, $users['password'])) {
       $_SESSION['error'] = 'Username atau password salah.';
       header('Location: /sim_persedian_barang/login.php');
       exit();
   }
 
   // Login berhasil — simpan session
-  $_SESSION['user_id']  = $user['user_id'];
-  $_SESSION['username'] = $user['username'];
-  $_SESSION['role']     = $user['role'];
+  $_SESSION['id_user']  = $users['id_user'];
+  $_SESSION['username'] = $users['username'];
+  $_SESSION['role']     = $users['role'];
 
   // Redirect ke dashboard
   header('Location: /sim_persedian_barang/pages/dashboard.php');
