@@ -70,7 +70,7 @@
                 </div>
             <?php endif; ?>
 
-            <form action="/inventtrack-pro/process/auth/login_process.php" method="POST">
+            <form action="/sim_persedian_barang/process/auth/login_process.php" method="POST">
                 <div class="mb-3">
                     <label for="username" class="form-label fw-semibold">Username</label>
                     <div class="input-group">

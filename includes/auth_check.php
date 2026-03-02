@@ -4,7 +4,7 @@
   }
 
   // Definisikan BASE_URL agar link tidak rusak di subfolder manapun
-  define('BASE_URL', '/inventtrack-pro');
+  define('BASE_URL', '/sim_persedian_barang');
 
   // Jika belum login, redirect ke halaman login
   if (!isset($_SESSION['user_id'])) {
