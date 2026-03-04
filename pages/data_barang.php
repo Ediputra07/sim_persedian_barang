@@ -83,7 +83,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                 <tr>
                     <th>#</th>
                     <th>Nama Barang</th>
-                    <th>Jenis</th>
+                    <th>Deskripsi</th>
                     <th>Harga</th>
                     <th>Stok</th>
                     <th>Supplier</th>
@@ -114,7 +114,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                                 data-bs-target="#modalEdit"
                                 data-id="<?= $row['id_barang'] ?>"
                                 data-nama="<?= htmlspecialchars($row['nama_barang']) ?>"
-                                data-jenis="<?= htmlspecialchars($row['deskripsi']) ?>"
+                                data-deskripsi="<?= htmlspecialchars($row['deskripsi']) ?>"
                                 data-harga="<?= $row['harga_barang'] ?>"
                                 data-stok="<?= $row['jumlah_stok'] ?>"
                                 data-supplier="<?= $row['id_supplier'] ?>">
@@ -157,7 +157,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                         <input type="text" name="nama_barang" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Jenis Barang</label>
+                        <label class="form-label fw-semibold">Deskripsi Barang</label>
                         <input type="text" name="deskripsi" class="form-control" required>
                     </div>
                     <div class="mb-3">
@@ -206,8 +206,8 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                         <input type="text" name="nama_barang" id="edit_nama" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Jenis Barang</label>
-                        <input type="text" name="deskripsi" id="edit_jenis" class="form-control" required>
+                        <label class="form-label fw-semibold">Deskripsi Barang</label>
+                        <input type="text" name="deskripsi" id="edit_deskripsi" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Harga</label>
@@ -267,7 +267,7 @@ document.getElementById('modalEdit').addEventListener('show.bs.modal', function 
     const btn = e.relatedTarget;
     document.getElementById('edit_id').value       = btn.dataset.id;
     document.getElementById('edit_nama').value     = btn.dataset.nama;
-    document.getElementById('edit_jenis').value    = btn.dataset.jenis;
+    document.getElementById('edit_deskripsi').value    = btn.dataset.deskripsi;
     document.getElementById('edit_harga').value    = btn.dataset.harga;
     document.getElementById('edit_supplier').value = btn.dataset.supplier;
 });

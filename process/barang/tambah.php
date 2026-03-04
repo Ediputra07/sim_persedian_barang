@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $nama    = trim($_POST['nama_barang']);
-$jenis   = trim($_POST['jenis_barang']);
+$deskripsi = trim($_POST['deskripsi']);
 $harga   = $_POST['harga_barang'];
 $sup_id  = $_POST['id_supplier'];
 
