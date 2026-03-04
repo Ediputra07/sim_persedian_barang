@@ -24,8 +24,8 @@ if (mysqli_stmt_num_rows($cek) > 0) {
     exit();
 }
 
-$stmt = mysqli_prepare($conn, "INSERT INTO barang (nama_barang, jenis_barang, harga_barang, jumlah_stok, id_supplier) VALUES (?, ?, ?, 0, ?)");
-mysqli_stmt_bind_param($stmt, 'ssdi', $nama, $jenis, $harga, $sup_id);
+$stmt = mysqli_prepare($conn, "INSERT INTO barang (nama_barang, deskripsi, harga_barang, jumlah_stok, id_supplier) VALUES (?, ?, ?, 0, ?)");
+mysqli_stmt_bind_param($stmt, 'ssdi', $nama, $deskripsi, $harga, $sup_id);
 
 if (mysqli_stmt_execute($stmt)) {
     $_SESSION['success'] = "Barang \"$nama\" berhasil ditambahkan.";

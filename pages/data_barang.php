@@ -96,7 +96,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= htmlspecialchars($row['jenis_barang']) ?></td>
+                        <td><?= htmlspecialchars($row['deskripsi']) ?></td>
                         <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.') ?></td>
                         <td>
                             <?php if ($row['jumlah_stok'] == 0): ?>
@@ -112,9 +112,9 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                             <button class="btn btn-sm btn-warning" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#modalEdit"
-                                data-id="<?= $row['barang_id'] ?>"
+                                data-id="<?= $row['id_barang'] ?>"
                                 data-nama="<?= htmlspecialchars($row['nama_barang']) ?>"
-                                data-jenis="<?= htmlspecialchars($row['jenis_barang']) ?>"
+                                data-jenis="<?= htmlspecialchars($row['deskripsi']) ?>"
                                 data-harga="<?= $row['harga_barang'] ?>"
                                 data-stok="<?= $row['jumlah_stok'] ?>"
                                 data-supplier="<?= $row['id_supplier'] ?>">
@@ -123,7 +123,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                             <button class="btn btn-sm btn-danger"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modalHapus"
-                                data-id="<?= $row['barang_id'] ?>"
+                                data-id="<?= $row['id_barang'] ?>"
                                 data-nama="<?= htmlspecialchars($row['nama_barang']) ?>">
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -158,7 +158,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Jenis Barang</label>
-                        <input type="text" name="jenis_barang" class="form-control" required>
+                        <input type="text" name="deskripsi" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Harga</label>
@@ -200,14 +200,14 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
             </div>
             <form action="/sim_persedian_barang/process/barang/edit.php" method="POST">
                 <div class="modal-body">
-                    <input type="hidden" name="barang_id" id="edit_id">
+                    <input type="hidden" name="id_barang" id="edit_id">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama Barang</label>
                         <input type="text" name="nama_barang" id="edit_nama" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Jenis Barang</label>
-                        <input type="text" name="jenis_barang" id="edit_jenis" class="form-control" required>
+                        <input type="text" name="deskripsi" id="edit_jenis" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Harga</label>
@@ -249,7 +249,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
             </div>
             <form action="/sim_persedian_barang/process/barang/hapus.php" method="POST">
                 <div class="modal-body">
-                    <input type="hidden" name="barang_id" id="hapus_id">
+                    <input type="hidden" name="id_barang" id="hapus_id">
                     <p>Yakin ingin menghapus barang <strong id="hapus_nama"></strong>?</p>
                 </div>
                 <div class="modal-footer">

@@ -9,12 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $id      = $_POST['id_barang'];
 $nama    = trim($_POST['nama_barang']);
-$jenis   = trim($_POST['jenis_barang']);
+$jenis   = trim($_POST['deskripsi']);
 $harga   = $_POST['harga_barang'];
 $sup_id  = $_POST['id_supplier'];
 
-$stmt = mysqli_prepare($conn, "UPDATE barang SET nama_barang=?, jenis_barang=?, harga_barang=?, id_supplier=? WHERE id_barang=?");
-mysqli_stmt_bind_param($stmt, 'ssdii', $nama, $jenis, $harga, $sup_id, $id);
+$stmt = mysqli_prepare($conn, "UPDATE barang SET nama_barang=?, deskripsi=?, harga_barang=?, id_supplier=? WHERE id_barang=?");
+mysqli_stmt_bind_param($stmt, 'ssdii', $nama, $deskripsi, $harga, $sup_id, $id);
 
 if (mysqli_stmt_execute($stmt)) {
     $_SESSION['success'] = "Barang \"$nama\" berhasil diupdate.";
