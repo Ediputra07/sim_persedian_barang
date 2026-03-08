@@ -45,11 +45,13 @@ $akses = [
     ]
 ];
 
-// Cek akses jika sudah login
-if (isset($_SESSION['role']) && !in_array($current_file, $public_pages)) {
+$current_path = $_SERVER['PHP_SELF'];
+$is_process   = strpos($current_path, '/process/') !== false;
+
+// Cek akses hanya untuk halaman di folder pages/
+if (!$is_process && isset($_SESSION['role']) && !in_array($current_file, $public_pages)) {
     $role = $_SESSION['role'];
     if (isset($akses[$role]) && !in_array($current_file, $akses[$role])) {
-        // Redirect ke dashboard dengan pesan error
         $_SESSION['error'] = "Anda tidak memiliki akses ke halaman tersebut.";
         header('Location: ' . BASE_URL . '/pages/dashboard.php');
         exit();
