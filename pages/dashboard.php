@@ -2,6 +2,11 @@
 <?php require_once __DIR__ . '/../config/database.php'; ?>
 
 <?php
+
+$stok_menipis_count = mysqli_fetch_row(mysqli_query($conn, "
+    SELECT COUNT(*) FROM barang WHERE jumlah_stok <= 5 AND jumlah_stok > 0
+"))[0];
+
 // Query ringkasan data
 $total_barang    = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM barang"))[0];
 $total_supplier  = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM supplier"))[0];
@@ -37,6 +42,15 @@ $query_terakhir = mysqli_query($conn, "
 <div class="alert alert-warning alert-dismissible fade show" role="alert">
     <i class="bi bi-exclamation-triangle-fill"></i>
     <strong><?= $stok_habis ?> barang</strong> memiliki stok habis! 
+    <a href="/sim_persedian_barang/pages/data_barang.php" class="alert-link">Lihat data barang</a>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<?php endif; ?>
+
+<?php if ($stok_menipis_count > 0): ?>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <strong><?= $stok_menipis_count ?> barang</strong> stoknya menipis (tersisa ≤ 5)!
     <a href="/sim_persedian_barang/pages/data_barang.php" class="alert-link">Lihat data barang</a>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>

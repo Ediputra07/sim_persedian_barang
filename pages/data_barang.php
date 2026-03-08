@@ -2,6 +2,15 @@
 <?php require_once __DIR__ . '/../config/database.php'; ?>
 
 <?php
+
+// Tambahkan setelah baris require config:
+$stok_menipis = mysqli_query($conn, "
+    SELECT nama_barang, jumlah_stok 
+    FROM barang 
+    WHERE jumlah_stok <= 5
+    ORDER BY jumlah_stok ASC
+");
+
 // Ambil pesan sukses/error jika ada
 $success = $_SESSION['success'] ?? '';
 $error   = $_SESSION['error'] ?? '';
@@ -35,6 +44,25 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
 ?>
 
 <h5 class="fw-bold mb-4"><i class="bi bi-archive"></i> Data Barang</h5>
+<?php if (mysqli_num_rows($stok_menipis) > 0): ?>
+<div class="alert alert-warning alert-dismissible fade show">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <strong>Perhatian!</strong> Barang berikut stoknya menipis atau habis:
+    <ul class="mb-0 mt-1">
+        <?php while ($s = mysqli_fetch_assoc($stok_menipis)): ?>
+        <li>
+            <?= htmlspecialchars($s['nama_barang']) ?> — 
+            <?php if ($s['jumlah_stok'] == 0): ?>
+                <span class="text-danger fw-bold">Habis</span>
+            <?php else: ?>
+                <span class="text-warning fw-bold">Sisa <?= $s['jumlah_stok'] ?></span>
+            <?php endif; ?>
+        </li>
+        <?php endwhile; ?>
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<?php endif; ?>
 
 <?php if ($success): ?>
     <div class="alert alert-success alert-dismissible fade show">
