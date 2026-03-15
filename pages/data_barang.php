@@ -153,7 +153,8 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalHapus"
                                     data-id="<?= $row['id_barang'] ?>"
-                                    data-nama="<?= htmlspecialchars($row['nama_barang']) ?>">
+                                    data-nama="<?= htmlspecialchars($row['nama_barang']) ?>"
+                                    data-stok="<?= $row['jumlah_stok'] ?>">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -161,7 +162,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-3">
+                            <td colspan="7" class="text-center text-muted py-3 fst-italic">
                                 <?= $keyword ? "Tidak ada barang dengan kata kunci \"$keyword\"" : "Belum ada data barang" ?>
                             </td>
                         </tr>
@@ -281,6 +282,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                 <div class="modal-body">
                     <input type="hidden" name="id_barang" id="hapus_id">
                     <p>Yakin ingin menghapus barang <strong id="hapus_nama"></strong>?</p>
+                    <small class="text-muted">Stok saat ini: <span id="hapus_stok"></span></small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -307,6 +309,7 @@ document.getElementById('modalHapus').addEventListener('show.bs.modal', function
     const btn = e.relatedTarget;
     document.getElementById('hapus_id').value   = btn.dataset.id;
     document.getElementById('hapus_nama').textContent = btn.dataset.nama;
+    document.getElementById('hapus_stok').textContent = btn.dataset.stok;
 });
 </script>
 

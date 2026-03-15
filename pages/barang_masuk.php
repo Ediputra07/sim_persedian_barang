@@ -75,8 +75,9 @@ $supplier_list = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_suppl
         <div class="col-12">
             <div class="card">
                 <div class="card-body text-center text-muted py-5">
-                    <i class="bi bi-box-arrow-in-down fs-1"></i>
-                    <p class="mt-2">Belum ada data barang masuk</p>
+                    <i class="bi bi-box-arrow-in-down fs-1 text-primary opacity-50"></i>
+                    <h6 class="mt-3">Belum ada data barang masuk</h6>
+                    <p class="small">Klik tombol "Input Barang Masuk" untuk menambahkan data</p>
                 </div>
             </div>
         </div>

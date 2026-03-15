@@ -63,8 +63,9 @@ $barang_list = mysqli_query($conn, "SELECT * FROM barang WHERE jumlah_stok > 0 O
         <div class="col-12">
             <div class="card">
                 <div class="card-body text-center text-muted py-5">
-                    <i class="bi bi-box-arrow-up fs-1"></i>
-                    <p class="mt-2">Belum ada data barang keluar</p>
+                    <i class="bi bi-box-arrow-up fs-1 text-primary opacity-50"></i>
+                    <h6 class="mt-3">Belum ada data barang keluar</h6>
+                    <p class="small">Klik tombol "Input Barang Keluar" untuk menambahkan data</p>
                 </div>
             </div>
         </div>

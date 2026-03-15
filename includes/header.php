@@ -14,8 +14,11 @@ require_once __DIR__ . '/helper.php';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+    <link rel="icon" type="image/png" 
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/icons/box-seam.svg">
 </head>
 <body>
+<?php $current_page = basename($_SERVER['PHP_SELF']); ?>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -31,7 +34,7 @@ require_once __DIR__ . '/helper.php';
             <ul class="navbar-nav me-auto">
                 <!-- Dashboard — semua role -->
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/dashboard.php">
+                    <a class="nav-link <?= $current_page === 'dashboard.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/dashboard.php">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
                 </li>
@@ -39,17 +42,17 @@ require_once __DIR__ . '/helper.php';
                 <!-- Hanya owner & admin gudang -->
                 <?php if (in_array($_SESSION['role'], ['owner', 'admin_gudang'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/data_barang.php">
+                    <a class="nav-link <?= $current_page === 'data_barang.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/data_barang.php">
                         <i class="bi bi-archive"></i> Data Barang
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/data_supplier.php">
+                    <a class="nav-link <?= $current_page === 'data_supplier.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/data_supplier.php">
                         <i class="bi bi-truck"></i> Supplier
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/barang_masuk.php">
+                    <a class="nav-link <?= $current_page === 'barang_masuk.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/barang_masuk.php">
                         <i class="bi bi-box-arrow-in-down"></i> Barang Masuk
                     </a>
                 </li>
@@ -58,7 +61,7 @@ require_once __DIR__ . '/helper.php';
                 <!-- Hanya owner & kasir -->
                 <?php if (in_array($_SESSION['role'], ['owner', 'kasir'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/barang_keluar.php">
+                    <a class="nav-link <?= $current_page === 'barang_keluar.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/barang_keluar.php">
                         <i class="bi bi-box-arrow-up"></i> Barang Keluar
                     </a>
                 </li>
@@ -66,7 +69,7 @@ require_once __DIR__ . '/helper.php';
 
                 <!-- Semua role -->
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/laporan.php">
+                    <a class="nav-link <?= $current_page === 'laporan.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/laporan.php">
                         <i class="bi bi-file-earmark-bar-graph"></i> Laporan
                     </a>
                 </li>
@@ -74,7 +77,7 @@ require_once __DIR__ . '/helper.php';
                 <!-- Hanya owner -->
                 <?php if ($_SESSION['role'] === 'owner'): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/manajemen_user.php">
+                    <a class="nav-link <?= $current_page === 'manajemen_user.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/manajemen_user.php">
                         <i class="bi bi-people"></i> User
                     </a>
                 </li>
@@ -93,7 +96,7 @@ require_once __DIR__ . '/helper.php';
                     </span>
                 </li>
                 <li class="nav-item me-2">
-                    <a class="nav-link" href="<?= BASE_URL ?>/pages/ubah_password.php">
+                    <a class="nav-link <?= $current_page === 'ubah_password.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/ubah_password.php">
                         <i class="bi bi-key"></i> Ubah Password
                     </a>
                 </li>

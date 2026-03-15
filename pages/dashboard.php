@@ -58,6 +58,23 @@ $query_terakhir = mysqli_query($conn, "
 
 <h5 class="fw-bold mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h5>
 
+<p class="text-muted mb-4">
+    <i class="bi bi-calendar3"></i> 
+    <?= date('l, d F Y') ?> &nbsp;|&nbsp;
+    <i class="bi bi-clock"></i>
+    <span id="jam"></span>
+</p>
+
+<script>
+function updateJam() {
+    const now = new Date();
+    document.getElementById('jam').textContent = 
+        now.toLocaleTimeString('id-ID');
+}
+setInterval(updateJam, 1000);
+updateJam();
+</script>
+
 <!-- Kartu Ringkasan -->
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-sm-6">
@@ -162,8 +179,8 @@ $query_terakhir = mysqli_query($conn, "
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-3">
-                            Belum ada transaksi
+                        <td colspan="4" class="text-center text-muted py-3 fst-italic">
+                            Belum ada transaksi yang tercatat.
                         </td>
                     </tr>
                 <?php endif; ?>

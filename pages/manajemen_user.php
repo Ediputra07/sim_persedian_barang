@@ -94,8 +94,9 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY role ASC, username A
         <div class="col-12">
             <div class="card">
                 <div class="card-body text-center text-muted py-5">
-                    <i class="bi bi-people fs-1"></i>
-                    <p class="mt-2">Belum ada data user</p>
+                    <i class="bi bi-people fs-1 text-primary opacity-50"></i>
+                    <h6 class="mt-3">Belum ada data user</h6>
+                    <p class="small">Klik tombol "Tambah User" untuk menambahkan data</p>
                 </div>
             </div>
         </div>
