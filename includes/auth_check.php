@@ -7,6 +7,24 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', '/sim_persedian_barang');
 }
 
+require_once __DIR__ . '/../config/database.php';
+
+// Cek apakah user yang sedang login masih ada di database
+if (isset($_SESSION['id_user'])) {
+    $cek_user = mysqli_prepare($conn, "SELECT id_user FROM users WHERE id_user = ?");
+    mysqli_stmt_bind_param($cek_user, 'i', $_SESSION['id_user']);
+    mysqli_stmt_execute($cek_user);
+    mysqli_stmt_store_result($cek_user);
+
+    if (mysqli_stmt_num_rows($cek_user) === 0) {
+        // Akun sudah dihapus, paksa logout
+        session_unset();
+        session_destroy();
+        header('Location: ' . BASE_URL . '/login.php');
+        exit();
+    }
+}
+
 $current_file = basename($_SERVER['PHP_SELF']);
 
 // Halaman yang boleh diakses tanpa login
