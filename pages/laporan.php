@@ -15,15 +15,15 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
     <div class="card-body">
         <div class="d-flex gap-2 flex-wrap">
             <a href="?tipe=stok"
-              class="btn <?= $tipe === 'stok' ? 'btn-primary' : 'btn-outline-primary' ?>">
+                class="btn <?= $tipe === 'stok' ? 'btn-primary' : 'btn-outline-primary' ?>">
                 <i class="bi bi-archive"></i> Stok Barang
             </a>
             <a href="?tipe=masuk&tgl_mulai=<?= $tgl_mulai ?>&tgl_akhir=<?= $tgl_akhir ?>"
-              class="btn <?= $tipe === 'masuk' ? 'btn-success' : 'btn-outline-success' ?>">
+                class="btn <?= $tipe === 'masuk' ? 'btn-success' : 'btn-outline-success' ?>">
                 <i class="bi bi-box-arrow-in-down"></i> Barang Masuk
             </a>
             <a href="?tipe=keluar&tgl_mulai=<?= $tgl_mulai ?>&tgl_akhir=<?= $tgl_akhir ?>"
-              class="btn <?= $tipe === 'keluar' ? 'btn-danger' : 'btn-outline-danger' ?>">
+                class="btn <?= $tipe === 'keluar' ? 'btn-danger' : 'btn-outline-danger' ?>">
                 <i class="bi bi-box-arrow-up"></i> Barang Keluar
             </a>
         </div>
@@ -39,12 +39,12 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
             <div>
                 <label class="form-label fw-semibold mb-1">Dari Tanggal</label>
                 <input type="date" name="tgl_mulai" class="form-control"
-                      value="<?= $tgl_mulai ?>" max="<?= date('Y-m-d') ?>">
+                        value="<?= $tgl_mulai ?>" max="<?= date('Y-m-d') ?>">
             </div>
             <div>
                 <label class="form-label fw-semibold mb-1">Sampai Tanggal</label>
                 <input type="date" name="tgl_akhir" class="form-control"
-                      value="<?= $tgl_akhir ?>" max="<?= date('Y-m-d') ?>">
+                        value="<?= $tgl_akhir ?>" max="<?= date('Y-m-d') ?>">
             </div>
             <div>
                 <button type="submit" class="btn btn-primary">
@@ -96,7 +96,7 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
                 <tr>
                     <th>#</th>
                     <th>Nama Barang</th>
-                    <th>Jenis</th>
+                    <th>Deskripsi</th>
                     <th>Harga</th>
                     <th>Stok</th>
                     <th>Supplier</th>
@@ -219,27 +219,24 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
 
 <script>
 function cetakLaporan() {
-    const area = document.getElementById('area-cetak').innerHTML;
-    const win = window.open('', '', 'width=900,height=700');
-    win.document.write(`
-        <html>
-        <head>
-            <title>Laporan InvenTrack Pro</title>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-            <style>
-                body { padding: 20px; }
-                @media print { body { padding: 0; } }
-            </style>
-        </head>
-        <body>
-            <h5 class="mb-3">InvenTrack Pro — Laporan</h5>
-            ${area}
-            <script>window.print();<\/script>
-        </body>
-        </html>
-    `);
-    win.document.close();
+    window.print()
 }
 </script>
+
+<style>
+@media print {
+    /* Sembunyikan semua kecuali area cetak */
+    body * { visibility: hidden; }
+    #area-cetak, #area-cetak * { visibility: visible; }
+    #area-cetak {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+    /* Sembunyikan tombol cetak */
+    .btn, .navbar, .alert, nav { display: none !important; }
+}
+</style>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
