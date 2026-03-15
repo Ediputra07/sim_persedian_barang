@@ -87,7 +87,7 @@ require_once __DIR__ . '/helper.php';
                     <span class="text-white">
                         <i class="bi bi-person-circle"></i>
                         <?= htmlspecialchars($_SESSION['username']) ?>
-                        <span class="badge bg-warning text-dark ms-1">
+                        <span class="badge bg-<?= $_SESSION['role'] === 'owner' ? 'success' : 'info' ?> text-white ms-1">
                             <?= ucfirst(str_replace('_', ' ', $_SESSION['role'])) ?>
                         </span>
                     </span>
@@ -98,8 +98,8 @@ require_once __DIR__ . '/helper.php';
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-warning" href="<?= BASE_URL ?>/process/auth/logout.php"
-                    onclick="return confirm('Yakin ingin logout?')">
+                    <a class="nav-link text-danger" href="#"
+                    data-bs-toggle="modal" data-bs-target="#modalLogout">
                         <i class="bi bi-box-arrow-right"></i> Logout
                     </a>
                 </li>
@@ -107,6 +107,31 @@ require_once __DIR__ . '/helper.php';
         </div>
     </div>
 </nav>
+
+<!-- Modal Logout -->
+<div class="modal fade" id="modalLogout" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="mb-0">Yakin ingin keluar dari sistem?</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Batal
+                </button>
+                <a href="<?= BASE_URL ?>/process/auth/logout.php" class="btn btn-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Konten utama -->
 <div class="container-fluid mt-4 px-4">
