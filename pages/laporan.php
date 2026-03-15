@@ -19,15 +19,15 @@ $id_supplier = $_GET['id_supplier'] ?? '';
     <div class="card-body">
         <div class="d-flex gap-2 flex-wrap">
             <a href="?tipe=stok"
-              class="btn <?= $tipe === 'stok' ? 'btn-primary' : 'btn-outline-primary' ?>">
+                class="btn <?= $tipe === 'stok' ? 'btn-primary' : 'btn-outline-primary' ?>">
                 <i class="bi bi-archive"></i> Stok Barang
             </a>
             <a href="?tipe=masuk&tgl_mulai=<?= $tgl_mulai ?>&tgl_akhir=<?= $tgl_akhir ?>"
-              class="btn <?= $tipe === 'masuk' ? 'btn-success' : 'btn-outline-success' ?>">
+                class="btn <?= $tipe === 'masuk' ? 'btn-success' : 'btn-outline-success' ?>">
                 <i class="bi bi-box-arrow-in-down"></i> Barang Masuk
             </a>
             <a href="?tipe=keluar&tgl_mulai=<?= $tgl_mulai ?>&tgl_akhir=<?= $tgl_akhir ?>"
-              class="btn <?= $tipe === 'keluar' ? 'btn-danger' : 'btn-outline-danger' ?>">
+                class="btn <?= $tipe === 'keluar' ? 'btn-danger' : 'btn-outline-danger' ?>">
                 <i class="bi bi-box-arrow-up"></i> Barang Keluar
             </a>
         </div>
@@ -39,46 +39,16 @@ $id_supplier = $_GET['id_supplier'] ?? '';
     <div class="card-body">
         <form method="GET" class="d-flex gap-2 flex-wrap align-items-end">
             <input type="hidden" name="tipe" value="<?= $tipe ?>">
-            
-            <?php if ($tipe === 'stok'): ?>
-                <!-- Filter Stok -->
-                <div>
-                    <label class="form-label fw-semibold mb-1">Status Stok</label>
-                    <select name="status_stok" class="form-select">
-                        <option value="">Semua Status</option>
-                        <option value="tersedia" <?= $status_stok === 'tersedia' ? 'selected' : '' ?>>Tersedia (>5)</option>
-                        <option value="menipis" <?= $status_stok === 'menipis' ? 'selected' : '' ?>>Menipis (≤5)</option>
-                        <option value="habis" <?= $status_stok === 'habis' ? 'selected' : '' ?>>Habis (0)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="form-label fw-semibold mb-1">Supplier</label>
-                    <select name="id_supplier" class="form-select">
-                        <option value="">Semua Supplier</option>
-                        <?php 
-                        $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
-                        while ($s = mysqli_fetch_assoc($suppliers)): 
-                        ?>
-                            <option value="<?= $s['id_supplier'] ?>" <?= $id_supplier == $s['id_supplier'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($s['nama_supplier']) ?>
-                            </option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-            <?php else: ?>
-                <!-- Filter Tanggal -->
-                <div>
-                    <label class="form-label fw-semibold mb-1">Dari Tanggal</label>
-                    <input type="date" name="tgl_mulai" class="form-control"
-                          value="<?= $tgl_mulai ?>" max="<?= date('Y-m-d') ?>">
-                </div>
-                <div>
-                    <label class="form-label fw-semibold mb-1">Sampai Tanggal</label>
-                    <input type="date" name="tgl_akhir" class="form-control"
-                          value="<?= $tgl_akhir ?>" max="<?= date('Y-m-d') ?>">
-                </div>
-            <?php endif; ?>
-
+            <div>
+                <label class="form-label fw-semibold mb-1">Dari Tanggal</label>
+                <input type="date" name="tgl_mulai" class="form-control"
+                        value="<?= $tgl_mulai ?>" max="<?= date('Y-m-d') ?>">
+            </div>
+            <div>
+                <label class="form-label fw-semibold mb-1">Sampai Tanggal</label>
+                <input type="date" name="tgl_akhir" class="form-control"
+                        value="<?= $tgl_akhir ?>" max="<?= date('Y-m-d') ?>">
+            </div>
             <div>
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-filter"></i> Filter
@@ -136,44 +106,46 @@ $id_supplier = $_GET['id_supplier'] ?? '';
         $sql .= " ORDER BY b.nama_barang ASC";
         $data = mysqli_query($conn, $sql);
         ?>
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nama Barang</th>
-                    <th>Jenis</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                    <th>Supplier</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($data) > 0): ?>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= htmlspecialchars($row['deskripsi']) ?></td>
-                        <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.') ?></td>
-                        <td><?= $row['jumlah_stok'] ?></td>
-                        <td><?= htmlspecialchars($row['nama_supplier'] ?? '-') ?></td>
-                        <td>
-                            <?php if ($row['jumlah_stok'] == 0): ?>
-                                <span class="badge bg-danger">Habis</span>
-                            <?php elseif ($row['jumlah_stok'] <= 5): ?>
-                                <span class="badge bg-warning text-dark">Menipis</span>
-                            <?php else: ?>
-                                <span class="badge bg-success">Tersedia</span>
-                            <?php endif; ?>
-                        </td>
+                        <th>#</th>
+                        <th>Nama Barang</th>
+                        <th>Deskripsi</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Supplier</th>
+                        <th>Status</th>
                     </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr><td colspan="7" class="text-center text-muted py-3">Belum ada data</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($data) > 0): ?>
+                        <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                            <td><?= htmlspecialchars($row['deskripsi']) ?></td>
+                            <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.') ?></td>
+                            <td><?= $row['jumlah_stok'] ?></td>
+                            <td><?= htmlspecialchars($row['nama_supplier'] ?? '-') ?></td>
+                            <td>
+                                <?php if ($row['jumlah_stok'] == 0): ?>
+                                    <span class="badge bg-danger">Habis</span>
+                                <?php elseif ($row['jumlah_stok'] <= 5): ?>
+                                    <span class="badge bg-warning text-dark">Menipis</span>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Tersedia</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="7" class="text-center text-muted py-3 fst-italic">Belum ada data stok barang</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
         <?php elseif ($tipe === 'masuk'): ?>
         <!-- LAPORAN BARANG MASUK -->
@@ -190,34 +162,36 @@ $id_supplier = $_GET['id_supplier'] ?? '';
         mysqli_stmt_execute($stmt);
         $data = mysqli_stmt_get_result($stmt);
         ?>
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Tanggal</th>
-                    <th>Nama Barang</th>
-                    <th>Supplier</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($data) > 0): ?>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= format_tanggal($row['tanggal_masuk']) ?></td>
-                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= htmlspecialchars($row['nama_supplier']) ?></td>
-                        <td><?= $row['jumlah_barang_masuk'] ?></td>
-                        <td><?= htmlspecialchars($row['keterangan'] ?? '-') ?></td>
+                        <th>#</th>
+                        <th>Tanggal</th>
+                        <th>Nama Barang</th>
+                        <th>Supplier</th>
+                        <th>Jumlah</th>
+                        <th>Keterangan</th>
                     </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($data) > 0): ?>
+                        <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= format_tanggal($row['tanggal_masuk']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_supplier']) ?></td>
+                            <td><?= $row['jumlah_barang_masuk'] ?></td>
+                            <td><?= htmlspecialchars($row['keterangan'] ?? '-') ?></td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
         <?php else: ?>
         <!-- LAPORAN BARANG KELUAR -->
@@ -233,62 +207,56 @@ $id_supplier = $_GET['id_supplier'] ?? '';
         mysqli_stmt_execute($stmt);
         $data = mysqli_stmt_get_result($stmt);
         ?>
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Tanggal</th>
-                    <th>Nama Barang</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($data) > 0): ?>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= format_tanggal($row['tanggal_keluar']) ?></td>
-                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= $row['jumlah_barang_keluar'] ?></td>
-                        <td><?= htmlspecialchars($row['keterangan'] ?? '-') ?></td>
+                        <th>#</th>
+                        <th>Tanggal</th>
+                        <th>Nama Barang</th>
+                        <th>Jumlah</th>
                     </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr><td colspan="5" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($data) > 0): ?>
+                        <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= format_tanggal($row['tanggal_keluar']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                            <td><?= $row['jumlah_barang_keluar'] ?></td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="4" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
         <?php endif; ?>
-
     </div>
 </div>
 
 <script>
 function cetakLaporan() {
-    const area = document.getElementById('area-cetak').innerHTML;
-    const win = window.open('', '', 'width=900,height=700');
-    win.document.write(`
-        <html>
-        <head>
-            <title>Laporan InvenTrack Pro</title>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-            <style>
-                body { padding: 20px; font-family: sans-serif; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #dee2e6; padding: 8px; }
-                @media print { body { padding: 0; } }
-            </style>
-        </head>
-        <body>
-            <h5 class="mb-3">InvenTrack Pro — Laporan</h5>
-            ${area}
-            <script>window.print();<\/script>
-        </body>
-        </html>
-    `);
-    win.document.close();
+    window.print()
 }
 </script>
+
+<style>
+@media print {
+    /* Sembunyikan semua kecuali area cetak */
+    body * { visibility: hidden; }
+    #area-cetak, #area-cetak * { visibility: visible; }
+    #area-cetak {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+    /* Sembunyikan tombol cetak */
+    .btn, .navbar, .alert, nav { display: none !important; }
+}
+</style>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

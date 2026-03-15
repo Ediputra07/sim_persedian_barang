@@ -6,7 +6,16 @@ $success = $_SESSION['success'] ?? '';
 $error   = $_SESSION['error'] ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
 
-$result = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
+$keyword = trim($_GET['search'] ?? '');
+if ($keyword !== '') {
+    $stmt = mysqli_prepare($conn, "SELECT * FROM supplier WHERE nama_supplier LIKE ? ORDER BY nama_supplier ASC");
+    $like = "%$keyword%";
+    mysqli_stmt_bind_param($stmt, 's', $like);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+} else {
+    $result = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
+}
 ?>
 
 <h5 class="fw-bold mb-4"><i class="bi bi-truck"></i> Data Supplier</h5>
@@ -27,7 +36,21 @@ $result = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier ASC
 
 <!-- Toolbar -->
 <div class="card mb-3">
-    <div class="card-body d-flex justify-content-end">
+    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <form method="GET" class="d-flex gap-2">
+            <input type="text" name="search" class="form-control"
+                    placeholder="Cari nama supplier..."
+                    value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+            <?php if (!empty($_GET['search'])): ?>
+                <a href="/sim_persedian_barang/pages/data_supplier.php" class="btn btn-secondary">
+                    <i class="bi bi-x"></i>
+                </a>
+            <?php endif; ?>
+        </form>
+
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalTambah">
             <i class="bi bi-plus-lg"></i> Tambah Supplier
         </button>
@@ -79,8 +102,9 @@ $result = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier ASC
         <div class="col-12">
             <div class="card">
                 <div class="card-body text-center text-muted py-5">
-                    <i class="bi bi-truck fs-1"></i>
-                    <p class="mt-2">Belum ada data supplier</p>
+                    <i class="bi bi-truck fs-1 text-primary opacity-50"></i>
+                    <h6 class="mt-3">Belum ada data supplier</h6>
+                    <p class="small">Klik tombol "Tambah Supplier" untuk menambahkan data</p>
                 </div>
             </div>
         </div>

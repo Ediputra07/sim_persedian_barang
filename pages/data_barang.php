@@ -106,67 +106,70 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
 <!-- Tabel Data Barang -->
 <div class="card">
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nama Barang</th>
-                    <th>Deskripsi</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                    <th>Supplier</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($result) > 0): ?>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($result)): ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= htmlspecialchars($row['deskripsi']) ?></td>
-                        <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.') ?></td>
-                        <td>
-                            <?php if ($row['jumlah_stok'] == 0): ?>
-                                <span class="badge bg-danger">Habis</span>
-                            <?php elseif ($row['jumlah_stok'] <= 5): ?>
-                                <span class="badge bg-warning text-dark"><?= $row['jumlah_stok'] ?></span>
-                            <?php else: ?>
-                                <span class="badge bg-success"><?= $row['jumlah_stok'] ?></span>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= htmlspecialchars($row['nama_supplier'] ?? '-') ?></td>
-                        <td>
-                            <button class="btn btn-sm btn-warning" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#modalEdit"
-                                data-id="<?= $row['id_barang'] ?>"
-                                data-nama="<?= htmlspecialchars($row['nama_barang']) ?>"
-                                data-deskripsi="<?= htmlspecialchars($row['deskripsi']) ?>"
-                                data-harga="<?= $row['harga_barang'] ?>"
-                                data-stok="<?= $row['jumlah_stok'] ?>"
-                                data-supplier="<?= $row['id_supplier'] ?>">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalHapus"
-                                data-id="<?= $row['id_barang'] ?>"
-                                data-nama="<?= htmlspecialchars($row['nama_barang']) ?>">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
+                        <th>#</th>
+                        <th>Nama Barang</th>
+                        <th>Deskripsi</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Supplier</th>
+                        <th>Aksi</th>
                     </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="7" class="text-center text-muted py-3">
-                            <?= $keyword ? "Tidak ada barang dengan kata kunci \"$keyword\"" : "Belum ada data barang" ?>
-                        </td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php $no = 1; while ($row = mysqli_fetch_assoc($result)): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                            <td><?= htmlspecialchars($row['deskripsi']) ?></td>
+                            <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.') ?></td>
+                            <td>
+                                <?php if ($row['jumlah_stok'] == 0): ?>
+                                    <span class="badge bg-danger">Habis</span>
+                                <?php elseif ($row['jumlah_stok'] <= 5): ?>
+                                    <span class="badge bg-warning text-dark"><?= $row['jumlah_stok'] ?></span>
+                                <?php else: ?>
+                                    <span class="badge bg-success"><?= $row['jumlah_stok'] ?></span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= htmlspecialchars($row['nama_supplier'] ?? '-') ?></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#modalEdit"
+                                    data-id="<?= $row['id_barang'] ?>"
+                                    data-nama="<?= htmlspecialchars($row['nama_barang']) ?>"
+                                    data-deskripsi="<?= htmlspecialchars($row['deskripsi']) ?>"
+                                    data-harga="<?= $row['harga_barang'] ?>"
+                                    data-stok="<?= $row['jumlah_stok'] ?>"
+                                    data-supplier="<?= $row['id_supplier'] ?>">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalHapus"
+                                    data-id="<?= $row['id_barang'] ?>"
+                                    data-nama="<?= htmlspecialchars($row['nama_barang']) ?>"
+                                    data-stok="<?= $row['jumlah_stok'] ?>">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-3 fst-italic">
+                                <?= $keyword ? "Tidak ada barang dengan kata kunci \"$keyword\"" : "Belum ada data barang" ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -279,6 +282,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                 <div class="modal-body">
                     <input type="hidden" name="id_barang" id="hapus_id">
                     <p>Yakin ingin menghapus barang <strong id="hapus_nama"></strong>?</p>
+                    <small class="text-muted">Stok saat ini: <span id="hapus_stok"></span></small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -359,6 +363,7 @@ document.getElementById('modalHapus').addEventListener('show.bs.modal', function
     const btn = e.relatedTarget;
     document.getElementById('hapus_id').value   = btn.dataset.id;
     document.getElementById('hapus_nama').textContent = btn.dataset.nama;
+    document.getElementById('hapus_stok').textContent = btn.dataset.stok;
 });
 </script>
 
