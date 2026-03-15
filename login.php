@@ -1,17 +1,18 @@
 <?php
-  if (session_status() === PHP_SESSION_NONE) {
-      session_start();
-  }
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-  // Jika sudah login, langsung ke dashboard
-  if (isset($_SESSION['id_user'])) {
-      header('Location: /sim_persedian_barang/pages/dashboard.php');
-      exit();
-  }
+    // Jika sudah login, langsung ke dashboard
+    if (isset($_SESSION['id_user'])) {
+        header('Location: /sim_persedian_barang/pages/dashboard.php');
+        exit();
+    }
 
-  // Ambil pesan error jika ada
-  $error = $_SESSION['error'] ?? '';
-  unset($_SESSION['error']);
+    // Ambil pesan error jika ada
+    $error = $_SESSION['error'] ?? '';
+    $timeout_msg = isset($_GET['timeout']) ? 'Sesi Anda telah berakhir. Silakan login kembali.' : '';
+    unset($_SESSION['error']);
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +68,12 @@
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="bi bi-exclamation-triangle"></i> <?= htmlspecialchars($error) ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($timeout_msg): ?>
+                <div class="alert alert-warning">
+                    <i class="bi bi-clock"></i> <?= $timeout_msg ?>
                 </div>
             <?php endif; ?>
 

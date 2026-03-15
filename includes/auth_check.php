@@ -9,6 +9,19 @@ if (!defined('BASE_URL')) {
 
 require_once __DIR__ . '/../config/database.php';
 
+// Session timeout otomatis setelah 30 menit tidak aktif
+$timeout = 1800; // 30 menit dalam detik
+
+if (isset($_SESSION['last_activity'])) {
+    if (time() - $_SESSION['last_activity'] > $timeout) {
+        session_unset();
+        session_destroy();
+        header('Location: ' . BASE_URL . '/login.php?timeout=1');
+        exit();
+    }
+}
+$_SESSION['last_activity'] = time();
+
 // Cek apakah user yang sedang login masih ada di database
 if (isset($_SESSION['id_user'])) {
     $cek_user = mysqli_prepare($conn, "SELECT id_user FROM users WHERE id_user = ?");

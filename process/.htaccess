@@ -1,0 +1,2 @@
+# Tolak akses langsung ke folder process dari browser
+Options -Indexes
