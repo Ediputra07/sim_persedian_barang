@@ -39,8 +39,8 @@ $query_terakhir = mysqli_query($conn, "
 
 <!-- Alert stok habis -->
 <?php if ($stok_habis > 0): ?>
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <i class="bi bi-exclamation-triangle-fill"></i>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-x-circle-fill"></i>
     <strong><?= $stok_habis ?> barang</strong> memiliki stok habis! 
     <a href="/sim_persedian_barang/pages/data_barang.php" class="alert-link">Lihat data barang</a>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -64,7 +64,14 @@ $query_terakhir = mysqli_query($conn, "
         <div class="card text-white bg-primary h-100">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="fs-2 fw-bold"><?= $total_barang ?></div>
+                    <div class="fs-2 fw-bold">
+                        <?= $total_barang ?>
+                        <?php if (($stok_habis + $stok_menipis_count) > 0): ?>
+                            <span class="badge bg-danger fs-6 align-middle border border-white" title="Perlu Perhatian">
+                                <i class="bi bi-exclamation-circle"></i> <?= $stok_habis + $stok_menipis_count ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
                     <div>Total Barang</div>
                 </div>
                 <i class="bi bi-archive fs-1 opacity-50"></i>

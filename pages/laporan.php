@@ -6,6 +6,10 @@
 $tgl_mulai = $_GET['tgl_mulai'] ?? date('Y-m-01'); // default awal bulan ini
 $tgl_akhir = $_GET['tgl_akhir'] ?? date('Y-m-d');  // default hari ini
 $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
+
+// Filter tambahan untuk stok
+$status_stok = $_GET['status_stok'] ?? '';
+$id_supplier = $_GET['id_supplier'] ?? '';
 ?>
 
 <h5 class="fw-bold mb-4"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</h5>
@@ -30,22 +34,51 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
     </div>
 </div>
 
-<!-- Filter Tanggal (hanya untuk masuk & keluar) -->
-<?php if ($tipe !== 'stok'): ?>
+<!-- Filter Area -->
 <div class="card mb-3">
     <div class="card-body">
         <form method="GET" class="d-flex gap-2 flex-wrap align-items-end">
             <input type="hidden" name="tipe" value="<?= $tipe ?>">
-            <div>
-                <label class="form-label fw-semibold mb-1">Dari Tanggal</label>
-                <input type="date" name="tgl_mulai" class="form-control"
-                      value="<?= $tgl_mulai ?>" max="<?= date('Y-m-d') ?>">
-            </div>
-            <div>
-                <label class="form-label fw-semibold mb-1">Sampai Tanggal</label>
-                <input type="date" name="tgl_akhir" class="form-control"
-                      value="<?= $tgl_akhir ?>" max="<?= date('Y-m-d') ?>">
-            </div>
+            
+            <?php if ($tipe === 'stok'): ?>
+                <!-- Filter Stok -->
+                <div>
+                    <label class="form-label fw-semibold mb-1">Status Stok</label>
+                    <select name="status_stok" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="tersedia" <?= $status_stok === 'tersedia' ? 'selected' : '' ?>>Tersedia (>5)</option>
+                        <option value="menipis" <?= $status_stok === 'menipis' ? 'selected' : '' ?>>Menipis (≤5)</option>
+                        <option value="habis" <?= $status_stok === 'habis' ? 'selected' : '' ?>>Habis (0)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label fw-semibold mb-1">Supplier</label>
+                    <select name="id_supplier" class="form-select">
+                        <option value="">Semua Supplier</option>
+                        <?php 
+                        $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier ASC");
+                        while ($s = mysqli_fetch_assoc($suppliers)): 
+                        ?>
+                            <option value="<?= $s['id_supplier'] ?>" <?= $id_supplier == $s['id_supplier'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($s['nama_supplier']) ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+            <?php else: ?>
+                <!-- Filter Tanggal -->
+                <div>
+                    <label class="form-label fw-semibold mb-1">Dari Tanggal</label>
+                    <input type="date" name="tgl_mulai" class="form-control"
+                          value="<?= $tgl_mulai ?>" max="<?= date('Y-m-d') ?>">
+                </div>
+                <div>
+                    <label class="form-label fw-semibold mb-1">Sampai Tanggal</label>
+                    <input type="date" name="tgl_akhir" class="form-control"
+                          value="<?= $tgl_akhir ?>" max="<?= date('Y-m-d') ?>">
+                </div>
+            <?php endif; ?>
+
             <div>
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-filter"></i> Filter
@@ -54,7 +87,6 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
         </form>
     </div>
 </div>
-<?php endif; ?>
 
 <!-- Tombol Cetak -->
 <div class="d-flex justify-content-end mb-3">
@@ -84,12 +116,25 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
         <?php if ($tipe === 'stok'): ?>
         <!-- LAPORAN STOK -->
         <?php
-        $data = mysqli_query($conn, "
-            SELECT b.*, s.nama_supplier
-            FROM barang b
-            LEFT JOIN supplier s ON b.id_supplier = s.id_supplier
-            ORDER BY b.nama_barang ASC
-        ");
+        $sql = "SELECT b.*, s.nama_supplier 
+                FROM barang b 
+                LEFT JOIN supplier s ON b.id_supplier = s.id_supplier 
+                WHERE 1=1";
+
+        if ($status_stok === 'tersedia') {
+            $sql .= " AND b.jumlah_stok > 5";
+        } elseif ($status_stok === 'menipis') {
+            $sql .= " AND (b.jumlah_stok <= 5 AND b.jumlah_stok > 0)";
+        } elseif ($status_stok === 'habis') {
+            $sql .= " AND b.jumlah_stok = 0";
+        }
+
+        if (!empty($id_supplier)) {
+            $sql .= " AND b.id_supplier = " . (int)$id_supplier;
+        }
+
+        $sql .= " ORDER BY b.nama_barang ASC";
+        $data = mysqli_query($conn, $sql);
         ?>
         <table class="table table-hover mb-0">
             <thead>
@@ -195,6 +240,7 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
                     <th>Tanggal</th>
                     <th>Nama Barang</th>
                     <th>Jumlah</th>
+                    <th>Keterangan</th>
                 </tr>
             </thead>
             <tbody>
@@ -205,10 +251,11 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
                         <td><?= format_tanggal($row['tanggal_keluar']) ?></td>
                         <td><?= htmlspecialchars($row['nama_barang']) ?></td>
                         <td><?= $row['jumlah_barang_keluar'] ?></td>
+                        <td><?= htmlspecialchars($row['keterangan'] ?? '-') ?></td>
                     </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <tr><td colspan="4" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
@@ -227,7 +274,9 @@ function cetakLaporan() {
             <title>Laporan InvenTrack Pro</title>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
             <style>
-                body { padding: 20px; }
+                body { padding: 20px; font-family: sans-serif; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #dee2e6; padding: 8px; }
                 @media print { body { padding: 0; } }
             </style>
         </head>

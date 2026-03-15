@@ -55,6 +55,11 @@ $barang_list = mysqli_query($conn, "SELECT * FROM barang WHERE jumlah_stok > 0 O
                     <p class="mb-1 text-muted small">
                         <i class="bi bi-calendar"></i> <?= format_tanggal($row['tanggal_keluar']) ?>
                     </p>
+                    <?php if (!empty($row['keterangan'])): ?>
+                    <p class="mb-0 text-muted small">
+                        <i class="bi bi-chat-left-text"></i> <?= htmlspecialchars($row['keterangan']) ?>
+                    </p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -79,7 +84,7 @@ $barang_list = mysqli_query($conn, "SELECT * FROM barang WHERE jumlah_stok > 0 O
                 <h5 class="modal-title"><i class="bi bi-box-arrow-up"></i> Input Barang Keluar</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/sim_persedian_barang/process/barang_keluar/simpan.php" method="POST">
+            <form action="/sim_persedian_barang/process/barang_keluar/simpan.php" method="POST" id="formBarangKeluar">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Barang</label>
@@ -107,15 +112,23 @@ $barang_list = mysqli_query($conn, "SELECT * FROM barang WHERE jumlah_stok > 0 O
                               value="<?= date('Y-m-d') ?>"
                               max="<?= date('Y-m-d') ?>" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Keterangan</label>
+                        <textarea name="keterangan" class="form-control" rows="2" 
+                                placeholder="Contoh: Rusak, Kadaluarsa, Terjual, dll"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">Simpan</button>
+                    <button type="button" class="btn btn-danger" onclick="konfirmasiSimpan()">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Tambahkan library SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 // Tampilkan info stok saat barang dipilih
@@ -132,6 +145,80 @@ document.getElementById('selectBarang').addEventListener('change', function () {
         inputJumlah.max = '';
     }
 });
+
+function konfirmasiSimpan() {
+    const form = document.getElementById('formBarangKeluar');
+    const barang = document.getElementById('selectBarang');
+    const jumlah = document.getElementById('inputJumlah');
+    const tanggal = form.querySelector('input[name="tanggal_keluar"]');
+    const keterangan = form.querySelector('textarea[name="keterangan"]');
+
+    // 1. Validasi Input Kosong
+    if (!barang.value || !jumlah.value || !tanggal.value) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: 'Mohon lengkapi semua data yang wajib diisi.',
+            confirmButtonText: 'Oke'
+        });
+        return;
+    }
+
+    // 2. Validasi Logika Stok
+    const stokTersedia = parseInt(barang.options[barang.selectedIndex].dataset.stok || 0);
+    const jumlahKeluar = parseInt(jumlah.value);
+
+    if (jumlahKeluar <= 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Jumlah Tidak Valid',
+            text: 'Jumlah barang keluar harus lebih dari 0.',
+            confirmButtonText: 'Oke'
+        });
+        return;
+    }
+
+    if (jumlahKeluar > stokTersedia) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Stok Tidak Cukup',
+            text: `Stok saat ini hanya ${stokTersedia}. Anda mencoba mengeluarkan ${jumlahKeluar}.`,
+            confirmButtonText: 'Oke'
+        });
+        return;
+    }
+
+    // Ambil detail data untuk ditampilkan di popup
+    const namaBarangTeks = barang.options[barang.selectedIndex].text;
+    const namaBarang = namaBarangTeks.split('(')[0].trim();
+    const keteranganValue = keterangan.value.trim() || '-';
+
+    const detailHtml = `
+        <div style="text-align: left; padding: 0 1rem;">
+            <p class="mb-1"><strong>Nama Barang:</strong><br>${namaBarang}</p>
+            <p class="mb-1"><strong>Jumlah:</strong><br>${jumlah.value}</p>
+            <p class="mb-1"><strong>Tanggal:</strong><br>${tanggal.value}</p>
+            <p class="mb-0"><strong>Keterangan:</strong><br>${keteranganValue}</p>
+        </div>
+    `;
+
+    // 3. Jika tidak ada error, tampilkan Konfirmasi Simpan
+    Swal.fire({
+        title: 'Simpan Data Ini?',
+        html: detailHtml,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Simpan',
+        cancelButtonText: 'Batalkan',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

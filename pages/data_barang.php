@@ -48,7 +48,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
 <div class="alert alert-warning alert-dismissible fade show">
     <i class="bi bi-exclamation-triangle-fill"></i>
     <strong>Perhatian!</strong> Barang berikut stoknya menipis atau habis:
-    <ul class="mb-0 mt-1">
+    <ul class="mb-0 mt-1" style="max-height: 200px; overflow-y: auto;">
         <?php while ($s = mysqli_fetch_assoc($stok_menipis)): ?>
         <li>
             <?= htmlspecialchars($s['nama_barang']) ?> — 
@@ -178,7 +178,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                 <h5 class="modal-title"><i class="bi bi-plus-lg"></i> Tambah Barang</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/sim_persedian_barang/process/barang/tambah.php" method="POST">
+            <form action="/sim_persedian_barang/process/barang/tambah.php" method="POST" id="formTambahBarang">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama Barang</label>
@@ -211,7 +211,7 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <button type="button" class="btn btn-success" onclick="konfirmasiTambahBarang()">Simpan</button>
                 </div>
             </form>
         </div>
@@ -288,6 +288,60 @@ $suppliers = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_supplier 
         </div>
     </div>
 </div>
+
+<!-- Tambahkan library SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function konfirmasiTambahBarang() {
+    const form = document.getElementById('formTambahBarang');
+    const nama = form.querySelector('input[name="nama_barang"]');
+    const deskripsi = form.querySelector('input[name="deskripsi"]');
+    const harga = form.querySelector('input[name="harga_barang"]');
+    const supplier = form.querySelector('select[name="id_supplier"]');
+
+    // 1. Validasi Input Kosong
+    if (!nama.value || !deskripsi.value || harga.value === '' || !supplier.value) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: 'Mohon lengkapi semua kolom yang wajib diisi.',
+            confirmButtonText: 'Oke'
+        });
+        return;
+    }
+
+    // Ambil detail data untuk ditampilkan di popup
+    const namaSupplierTeks = supplier.options[supplier.selectedIndex].text;
+    const hargaFormatted = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(harga.value);
+
+    const detailHtml = `
+        <div style="text-align: left; padding: 0 1rem;">
+            <p class="mb-1"><strong>Nama Barang:</strong><br>${nama.value}</p>
+            <p class="mb-1"><strong>Deskripsi:</strong><br>${deskripsi.value}</p>
+            <p class="mb-1"><strong>Harga:</strong><br>${hargaFormatted}</p>
+            <p class="mb-0"><strong>Supplier:</strong><br>${namaSupplierTeks.trim()}</p>
+        </div>
+    `;
+
+    // 2. Jika tidak ada error, tampilkan Konfirmasi Simpan
+    Swal.fire({
+        title: 'Simpan Barang Baru?',
+        html: detailHtml,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#198754',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Simpan',
+        cancelButtonText: 'Batalkan',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}
+</script>
 
 <script>
 // Isi data ke modal edit

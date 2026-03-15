@@ -1,83 +1,82 @@
 <?php
-  require_once __DIR__ . '/../../includes/auth_check.php';
-  require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../includes/auth_check.php';
+require_once __DIR__ . '/../../config/database.php';
 
-  if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-      header('Location: /sim_persedian_barang/pages/barang_keluar.php');
-      exit();
-  }
+// Hanya user dengan role 'kasir' atau 'owner' yang bisa input barang keluar
+if (!in_array($_SESSION['role'], ['kasir', 'owner'])) {
+    $_SESSION['error'] = "Anda tidak memiliki akses untuk melakukan aksi ini.";
+    header('Location: /sim_persedian_barang/pages/dashboard.php');
+    exit();
+}
 
-  $id_barang = $_POST['id_barang'];
-  $jumlah    = (int) $_POST['jumlah_barang_keluar'];
-  $tanggal   = $_POST['tanggal_keluar'];
-  $id_user   = $_SESSION['id_user'];
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: /sim_persedian_barang/pages/barang_keluar.php');
+    exit();
+}
 
-  // Validasi jumlah
-  if ($jumlah <= 0) {
-      $_SESSION['error'] = "Jumlah barang keluar harus lebih dari 0.";
-      header('Location: /sim_persedian_barang/pages/barang_keluar.php');
-      exit();
-  }
+// Ambil data dari form
+$id_barang            = $_POST['id_barang'] ?? null;
+$jumlah_barang_keluar = $_POST['jumlah_barang_keluar'] ?? null;
+$tanggal_keluar       = $_POST['tanggal_keluar'] ?? null;
+$id_user              = $_SESSION['id_user'];
 
-  // Validasi tanggal
-  if (empty($tanggal) || !strtotime($tanggal)) {
-      $_SESSION['error'] = "Format tanggal tidak valid.";
-      header('Location: /sim_persedian_barang/pages/barang_keluar.php');
-      exit();
-  }
+// 1. Validasi input
+if (empty($id_barang) || empty($jumlah_barang_keluar) || empty($tanggal_keluar)) {
+    $_SESSION['error'] = "Semua kolom wajib diisi, kecuali keterangan.";
+    header('Location: /sim_persedian_barang/pages/barang_keluar.php');
+    exit();
+}
 
-  if ($tanggal > date('Y-m-d')) {
-      $_SESSION['error'] = "Tanggal tidak boleh melebihi hari ini.";
-      header('Location: /sim_persedian_barang/pages/barang_keluar.php');
-      exit();
-  }
+if (!is_numeric($jumlah_barang_keluar) || $jumlah_barang_keluar <= 0) {
+    $_SESSION['error'] = "Jumlah barang keluar harus berupa angka positif.";
+    header('Location: /sim_persedian_barang/pages/barang_keluar.php');
+    exit();
+}
 
-  // Cek stok mencukupi
-  $cek_stok = mysqli_prepare($conn, "SELECT nama_barang, jumlah_stok FROM barang WHERE id_barang = ?");
-  mysqli_stmt_bind_param($cek_stok, 'i', $id_barang);
-  mysqli_stmt_execute($cek_stok);
-  $stok_result = mysqli_stmt_get_result($cek_stok);
-  $barang = mysqli_fetch_assoc($stok_result);
+// Mulai transaksi untuk menjaga konsistensi data
+mysqli_begin_transaction($conn);
 
-  if (!$barang) {
-      $_SESSION['error'] = "Barang tidak ditemukan.";
-      header('Location: /sim_persedian_barang/pages/barang_keluar.php');
-      exit();
-  }
+try {
+    // 2. Cek stok barang saat ini (dengan locking untuk mencegah race condition)
+    $stmt_cek = mysqli_prepare($conn, "SELECT jumlah_stok, nama_barang FROM barang WHERE id_barang = ? FOR UPDATE");
+    mysqli_stmt_bind_param($stmt_cek, 'i', $id_barang);
+    mysqli_stmt_execute($stmt_cek);
+    $result_cek = mysqli_stmt_get_result($stmt_cek);
+    $barang = mysqli_fetch_assoc($result_cek);
 
-  if ($barang['jumlah_stok'] < $jumlah) {
-      $_SESSION['error'] = "Stok \"{$barang['nama_barang']}\" tidak mencukupi. Stok tersedia: {$barang['jumlah_stok']}.";
-      header('Location: /sim_persedian_barang/pages/barang_keluar.php');
-      exit();
-  }
+    if (!$barang) {
+        throw new Exception("Barang tidak ditemukan.");
+    }
 
-  // Simpan transaksi
-  mysqli_begin_transaction($conn);
+    if ($barang['jumlah_stok'] < $jumlah_barang_keluar) {
+        throw new Exception("Stok barang \"{$barang['nama_barang']}\" tidak mencukupi. Stok tersedia: {$barang['jumlah_stok']}.");
+    }
 
-  try {
-      // 1. Simpan ke tabel barang_keluar
-      $stmt = mysqli_prepare($conn, "
-          INSERT INTO barang_keluar (id_barang, id_user, tanggal_keluar, jumlah_barang_keluar)
-          VALUES (?, ?, ?, ?)
-      ");
-      mysqli_stmt_bind_param($stmt, 'iisi', $id_barang, $id_user, $tanggal, $jumlah);
-      mysqli_stmt_execute($stmt);
+    // 3. Kurangi stok di tabel `barang`
+    $stmt_update = mysqli_prepare($conn, "UPDATE barang SET jumlah_stok = jumlah_stok - ? WHERE id_barang = ?");
+    mysqli_stmt_bind_param($stmt_update, 'ii', $jumlah_barang_keluar, $id_barang);
+    if (!mysqli_stmt_execute($stmt_update)) {
+        throw new Exception("Gagal mengupdate stok barang.");
+    }
 
-      // 2. Kurangi stok
-      $update = mysqli_prepare($conn, "
-          UPDATE barang SET jumlah_stok = jumlah_stok - ? WHERE id_barang = ?
-      ");
-      mysqli_stmt_bind_param($update, 'ii', $jumlah, $id_barang);
-      mysqli_stmt_execute($update);
+    // 4. Catat di tabel `barang_keluar`
+    $stmt_insert = mysqli_prepare($conn, "INSERT INTO barang_keluar (id_barang, id_user, jumlah_barang_keluar, tanggal_keluar) VALUES (?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt_insert, 'iiis', $id_barang, $id_user, $jumlah_barang_keluar, $tanggal_keluar);
+    if (!mysqli_stmt_execute($stmt_insert)) {
+        throw new Exception("Gagal mencatat transaksi barang keluar.");
+    }
 
-      mysqli_commit($conn);
-      $_SESSION['success'] = "Barang keluar berhasil dicatat. Stok telah diperbarui.";
+    // Jika semua berhasil, commit transaksi
+    mysqli_commit($conn);
+    $_SESSION['success'] = "Data barang keluar berhasil disimpan.";
 
-  } catch (Exception $e) {
-      mysqli_rollback($conn);
-      $_SESSION['error'] = "Gagal menyimpan data. Silakan coba lagi.";
-  }
+} catch (Exception $e) {
+    // Jika ada error, rollback transaksi
+    mysqli_rollback($conn);
+    $_SESSION['error'] = $e->getMessage();
+}
 
-  header('Location: /sim_persedian_barang/pages/barang_keluar.php');
-  exit();
+// Redirect kembali ke halaman barang keluar
+header('Location: /sim_persedian_barang/pages/barang_keluar.php');
+exit();
 ?>

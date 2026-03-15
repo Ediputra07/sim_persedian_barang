@@ -11,7 +11,7 @@ $result = mysqli_query($conn, "
     SELECT bm.*, b.nama_barang, s.nama_supplier
     FROM barang_masuk bm
     JOIN barang b ON bm.id_barang = b.id_barang
-    JOIN supplier s ON bm.id_supplier = s.id_supplier
+    LEFT JOIN supplier s ON bm.id_supplier = s.id_supplier
     ORDER BY bm.tanggal_masuk DESC
 ");
 
@@ -57,12 +57,12 @@ $supplier_list = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_suppl
                         <span class="badge bg-success">+<?= $row['jumlah_barang_masuk'] ?></span>
                     </div>
                     <p class="mb-1 text-muted small">
-                        <i class="bi bi-truck"></i> <?= htmlspecialchars($row['nama_supplier']) ?>
+                        <i class="bi bi-truck"></i> <?= htmlspecialchars($row['nama_supplier'] ?? '-') ?>
                     </p>
                     <p class="mb-1 text-muted small">
                         <i class="bi bi-calendar"></i> <?= format_tanggal($row['tanggal_masuk']) ?>
                     </p>
-                    <?php if ($row['keterangan']): ?>
+                    <?php if (!empty($row['keterangan'])): ?>
                     <p class="mb-0 text-muted small">
                         <i class="bi bi-chat-left-text"></i> <?= htmlspecialchars($row['keterangan']) ?>
                     </p>
@@ -91,7 +91,7 @@ $supplier_list = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_suppl
                 <h5 class="modal-title"><i class="bi bi-box-arrow-in-down"></i> Input Barang Masuk</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/sim_persedian_barang/process/barang_masuk/simpan.php" method="POST">
+            <form action="/sim_persedian_barang/process/barang_masuk/simpan.php" method="POST" id="formBarangMasuk">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Barang</label>
@@ -124,8 +124,7 @@ $supplier_list = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_suppl
                         <label class="form-label fw-semibold">Tanggal</label>
                         <input type="date" name="tanggal_masuk" class="form-control" 
                                 value="<?= date('Y-m-d') ?>" 
-                                max="<?= date('Y-m-d') ?>"required>
-                                
+                                max="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Keterangan</label>
@@ -135,11 +134,79 @@ $supplier_list = mysqli_query($conn, "SELECT * FROM supplier ORDER BY nama_suppl
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <button type="button" class="btn btn-success" onclick="konfirmasiSimpan()">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Tambahkan library SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function konfirmasiSimpan() {
+    const form = document.getElementById('formBarangMasuk');
+    const barang = form.querySelector('select[name="id_barang"]');
+    const supplier = form.querySelector('select[name="id_supplier"]');
+    const jumlah = form.querySelector('input[name="jumlah_barang_masuk"]');
+    const tanggal = form.querySelector('input[name="tanggal_masuk"]');
+    const keterangan = form.querySelector('textarea[name="keterangan"]');
+
+    // 1. Validasi Input Kosong
+    if (!barang.value || !supplier.value || !jumlah.value || !tanggal.value) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: 'Mohon lengkapi semua data yang wajib diisi.',
+            confirmButtonText: 'Oke'
+        });
+        return;
+    }
+
+    // 2. Validasi Jumlah Positif
+    if (parseInt(jumlah.value) <= 0) {
+         Swal.fire({
+            icon: 'error',
+            title: 'Jumlah Tidak Valid',
+            text: 'Jumlah barang masuk harus lebih dari 0.',
+            confirmButtonText: 'Oke'
+        });
+        return;
+    }
+
+    // Ambil detail data untuk ditampilkan di popup
+    const namaBarangTeks = barang.options[barang.selectedIndex].text.split('(')[0].trim();
+    const namaSupplierTeks = supplier.options[supplier.selectedIndex].text;
+    const keteranganValue = keterangan.value.trim() || '-';
+
+    const detailHtml = `
+        <div style="text-align: left; padding: 0 1rem;">
+            <p class="mb-1"><strong>Barang:</strong><br>${namaBarangTeks}</p>
+            <p class="mb-1"><strong>Supplier:</strong><br>${namaSupplierTeks}</p>
+            <p class="mb-1"><strong>Jumlah:</strong><br>${jumlah.value}</p>
+            <p class="mb-1"><strong>Tanggal:</strong><br>${tanggal.value}</p>
+            <p class="mb-0"><strong>Keterangan:</strong><br>${keteranganValue}</p>
+        </div>
+    `;
+
+    // 3. Jika tidak ada error, tampilkan Konfirmasi Simpan
+    Swal.fire({
+        title: 'Simpan Data Ini?',
+        html: detailHtml,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#198754',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Simpan',
+        cancelButtonText: 'Batalkan',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
