@@ -91,44 +91,46 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
             ORDER BY b.nama_barang ASC
         ");
         ?>
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nama Barang</th>
-                    <th>Deskripsi</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                    <th>Supplier</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($data) > 0): ?>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= htmlspecialchars($row['deskripsi']) ?></td>
-                        <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.') ?></td>
-                        <td><?= $row['jumlah_stok'] ?></td>
-                        <td><?= htmlspecialchars($row['nama_supplier'] ?? '-') ?></td>
-                        <td>
-                            <?php if ($row['jumlah_stok'] == 0): ?>
-                                <span class="badge bg-danger">Habis</span>
-                            <?php elseif ($row['jumlah_stok'] <= 5): ?>
-                                <span class="badge bg-warning text-dark">Menipis</span>
-                            <?php else: ?>
-                                <span class="badge bg-success">Tersedia</span>
-                            <?php endif; ?>
-                        </td>
+                        <th>#</th>
+                        <th>Nama Barang</th>
+                        <th>Deskripsi</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Supplier</th>
+                        <th>Status</th>
                     </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr><td colspan="7" class="text-center text-muted py-3">Belum ada data</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($data) > 0): ?>
+                        <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                            <td><?= htmlspecialchars($row['deskripsi']) ?></td>
+                            <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.') ?></td>
+                            <td><?= $row['jumlah_stok'] ?></td>
+                            <td><?= htmlspecialchars($row['nama_supplier'] ?? '-') ?></td>
+                            <td>
+                                <?php if ($row['jumlah_stok'] == 0): ?>
+                                    <span class="badge bg-danger">Habis</span>
+                                <?php elseif ($row['jumlah_stok'] <= 5): ?>
+                                    <span class="badge bg-warning text-dark">Menipis</span>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Tersedia</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="7" class="text-center text-muted py-3">Belum ada data</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
         <?php elseif ($tipe === 'masuk'): ?>
         <!-- LAPORAN BARANG MASUK -->
@@ -145,34 +147,36 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
         mysqli_stmt_execute($stmt);
         $data = mysqli_stmt_get_result($stmt);
         ?>
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Tanggal</th>
-                    <th>Nama Barang</th>
-                    <th>Supplier</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($data) > 0): ?>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= format_tanggal($row['tanggal_masuk']) ?></td>
-                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= htmlspecialchars($row['nama_supplier']) ?></td>
-                        <td><?= $row['jumlah_barang_masuk'] ?></td>
-                        <td><?= htmlspecialchars($row['keterangan'] ?? '-') ?></td>
+                        <th>#</th>
+                        <th>Tanggal</th>
+                        <th>Nama Barang</th>
+                        <th>Supplier</th>
+                        <th>Jumlah</th>
+                        <th>Keterangan</th>
                     </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($data) > 0): ?>
+                        <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= format_tanggal($row['tanggal_masuk']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_supplier']) ?></td>
+                            <td><?= $row['jumlah_barang_masuk'] ?></td>
+                            <td><?= htmlspecialchars($row['keterangan'] ?? '-') ?></td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="6" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
         <?php else: ?>
         <!-- LAPORAN BARANG KELUAR -->
@@ -188,32 +192,33 @@ $tipe      = $_GET['tipe'] ?? 'stok';               // default laporan stok
         mysqli_stmt_execute($stmt);
         $data = mysqli_stmt_get_result($stmt);
         ?>
-        <table class="table table-hover mb-0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Tanggal</th>
-                    <th>Nama Barang</th>
-                    <th>Jumlah</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($data) > 0): ?>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td><?= $no++ ?></td>
-                        <td><?= format_tanggal($row['tanggal_keluar']) ?></td>
-                        <td><?= htmlspecialchars($row['nama_barang']) ?></td>
-                        <td><?= $row['jumlah_barang_keluar'] ?></td>
+                        <th>#</th>
+                        <th>Tanggal</th>
+                        <th>Nama Barang</th>
+                        <th>Jumlah</th>
                     </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr><td colspan="4" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($data) > 0): ?>
+                        <?php $no = 1; while ($row = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++ ?></td>
+                            <td><?= format_tanggal($row['tanggal_keluar']) ?></td>
+                            <td><?= htmlspecialchars($row['nama_barang']) ?></td>
+                            <td><?= $row['jumlah_barang_keluar'] ?></td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr><td colspan="4" class="text-center text-muted py-3">Tidak ada data pada periode ini</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
         <?php endif; ?>
-
     </div>
 </div>
 
