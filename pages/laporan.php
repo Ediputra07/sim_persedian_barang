@@ -59,8 +59,8 @@ $id_supplier = $_GET['id_supplier'] ?? '';
 </div>
 
 <!-- Tombol Cetak -->
-<div class="d-flex justify-content-end mb-3">
-    <button onclick="cetakLaporan()" class="btn btn-secondary">
+<div class="printLaporan d-flex justify-content-end mb-3">
+    <button onclick="cetakLaporan()" class=" btn btn-secondary">
         <i class="bi bi-printer"></i> Cetak Laporan
     </button>
 </div>
