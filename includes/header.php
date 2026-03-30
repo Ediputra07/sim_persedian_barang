@@ -39,8 +39,8 @@ require_once __DIR__ . '/helper.php';
                     </a>
                 </li>
 
-                <!-- Hanya owner & admin gudang -->
-                <?php if (in_array($_SESSION['role'], ['owner', 'admin_gudang'])): ?>
+                <!-- Admin Gudang: semua kecuali manajemen user -->
+                <?php if ($_SESSION['role'] === 'admin_gudang'): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= $current_page === 'data_barang.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/data_barang.php">
                         <i class="bi bi-archive"></i> Data Barang
@@ -56,10 +56,6 @@ require_once __DIR__ . '/helper.php';
                         <i class="bi bi-box-arrow-in-down"></i> Barang Masuk
                     </a>
                 </li>
-                <?php endif; ?>
-
-                <!-- Hanya owner & kasir -->
-                <?php if (in_array($_SESSION['role'], ['owner', 'kasir'])): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= $current_page === 'barang_keluar.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/barang_keluar.php">
                         <i class="bi bi-box-arrow-up"></i> Barang Keluar
@@ -67,14 +63,23 @@ require_once __DIR__ . '/helper.php';
                 </li>
                 <?php endif; ?>
 
-                <!-- Semua role -->
+                <!-- Kasir: laporan + barang keluar -->
+                <?php if ($_SESSION['role'] === 'kasir'): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= BASE_URL ?>/pages/barang_keluar.php">
+                        <i class="bi bi-box-arrow-up"></i> Barang Keluar
+                    </a>
+                </li>
+                <?php endif; ?>
+
+                <!-- Semua role: laporan -->
                 <li class="nav-item">
                     <a class="nav-link <?= $current_page === 'laporan.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/laporan.php">
                         <i class="bi bi-file-earmark-bar-graph"></i> Laporan
                     </a>
                 </li>
 
-                <!-- Hanya owner -->
+                <!-- Owner: laporan + manajemen user -->
                 <?php if ($_SESSION['role'] === 'owner'): ?>
                 <li class="nav-item">
                     <a class="nav-link <?= $current_page === 'manajemen_user.php' ? 'active fw-bold' : '' ?>" href="<?= BASE_URL ?>/pages/manajemen_user.php">

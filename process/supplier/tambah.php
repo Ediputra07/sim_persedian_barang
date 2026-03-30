@@ -11,6 +11,13 @@ $nama   = trim($_POST['nama_supplier']);
 $kontak = trim($_POST['kontak']);
 $alamat = trim($_POST['alamat']);
 
+// Validasi field tidak boleh kosong
+if ($nama === '' || $kontak === '' || $alamat === '') {
+    $_SESSION['error'] = "Semua field harus diisi.";
+    header('Location: /sim_persedian_barang/pages/data_supplier.php');
+    exit();
+}
+
 // Cek duplikasi nama supplier
 $cek = mysqli_prepare($conn, "SELECT id_supplier FROM supplier WHERE nama_supplier = ?");
 mysqli_stmt_bind_param($cek, 's', $nama);

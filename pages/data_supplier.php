@@ -127,11 +127,11 @@ if ($keyword !== '') {
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Kontak</label>
-                        <input type="text" name="kontak" class="form-control" placeholder="No. HP / Telepon">
+                        <input type="text" name="kontak" class="form-control" placeholder="No. HP / Telepon" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Alamat</label>
-                        <textarea name="alamat" class="form-control" rows="3" placeholder="Alamat lengkap"></textarea>
+                        <textarea name="alamat" class="form-control" rows="3" placeholder="Alamat lengkap" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -160,11 +160,11 @@ if ($keyword !== '') {
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Kontak</label>
-                        <input type="text" name="kontak" id="edit_kontak" class="form-control">
+                        <input type="text" name="kontak" id="edit_kontak" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Alamat</label>
-                        <textarea name="alamat" id="edit_alamat" class="form-control" rows="3"></textarea>
+                        <textarea name="alamat" id="edit_alamat" class="form-control" rows="3" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

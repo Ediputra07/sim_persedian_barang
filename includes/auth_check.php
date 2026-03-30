@@ -41,20 +41,21 @@ if (isset($_SESSION['id_user'])) {
 $current_file = basename($_SERVER['PHP_SELF']);
 
 // Halaman yang boleh diakses tanpa login
-$public_pages = ['login.php'];
+$public_pages = ['login.php', '403.php'];
 
 if (!isset($_SESSION['id_user']) && !in_array($current_file, $public_pages)) {
     header('Location: ' . BASE_URL . '/login.php');
     exit();
 }
 
-// Aturan akses per role per halaman
+// Aturan akses per role per halaman (halaman di pages/)
 $akses = [
     'admin_gudang' => [
         'dashboard.php',
         'data_barang.php',
         'data_supplier.php',
         'barang_masuk.php',
+        'barang_keluar.php',
         'laporan.php',
         'ubah_password.php'
     ],
@@ -66,10 +67,6 @@ $akses = [
     ],
     'owner' => [
         'dashboard.php',
-        'data_barang.php',
-        'data_supplier.php',
-        'barang_masuk.php',
-        'barang_keluar.php',
         'laporan.php',
         'manajemen_user.php',
         'ubah_password.php'
@@ -79,12 +76,49 @@ $akses = [
 $current_path = $_SERVER['PHP_SELF'];
 $is_process   = strpos($current_path, '/process/') !== false;
 
-// Cek akses hanya untuk halaman di folder pages/
+// Validasi akses halaman biasa (tidak process)
 if (!$is_process && isset($_SESSION['role']) && !in_array($current_file, $public_pages)) {
     $role = $_SESSION['role'];
-    if (isset($akses[$role]) && !in_array($current_file, $akses[$role])) {
-        $_SESSION['error'] = "Anda tidak memiliki akses ke halaman tersebut.";
-        header('Location: ' . BASE_URL . '/pages/dashboard.php');
+    if (!isset($akses[$role]) || !in_array($current_file, $akses[$role])) {
+        header('Location: ' . BASE_URL . '/pages/403.php');
+        exit();
+    }
+}
+
+// Validasi akses untuk file process
+else if ($is_process && isset($_SESSION['role'])) {
+    $role = $_SESSION['role'];
+    $process = basename($current_path);
+
+    $process_role_allowed = [
+        'admin_gudang' => [
+            'tambah.php', 'edit.php', 'hapus.php', 'simpan.php',
+            'logout.php'
+        ],
+        'kasir' => [
+            'simpan.php', 'logout.php'
+        ],
+        'owner' => [
+            'tambah.php', 'edit.php', 'hapus.php', 'ubah_password.php', 'logout.php'
+        ]
+    ];
+
+    // Cek akses process berdasarkan folder dan file
+    $folder = basename(dirname($current_path));
+    $is_allowed = false;
+    if (isset($process_role_allowed[$role]) && in_array($process, $process_role_allowed[$role])) {
+        // Kasir hanya boleh dari folder barang_keluar
+        if ($role === 'kasir' && $folder !== 'barang_keluar') {
+            $is_allowed = false;
+        } elseif ($role === 'admin_gudang' && $folder === 'user') {
+            $is_allowed = false;
+        } else {
+            $is_allowed = true;
+        }
+    }
+
+    if (!$is_allowed) {
+        header('Location: ' . BASE_URL . '/pages/403.php');
         exit();
     }
 }

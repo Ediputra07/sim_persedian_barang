@@ -45,14 +45,18 @@ try {
         VALUES (?, ?, ?, ?, ?, ?)
     ");
     mysqli_stmt_bind_param($stmt, 'iiisis', $id_barang, $id_supplier, $id_user, $tanggal, $jumlah, $keterangan);
-    mysqli_stmt_execute($stmt);
+    if (!mysqli_stmt_execute($stmt)) {
+        throw new Exception('Gagal insert barang_masuk: ' . mysqli_error($conn));
+    }
 
     // 2. Update stok di tabel barang
     $update = mysqli_prepare($conn, "
         UPDATE barang SET jumlah_stok = jumlah_stok + ? WHERE id_barang = ?
     ");
     mysqli_stmt_bind_param($update, 'ii', $jumlah, $id_barang);
-    mysqli_stmt_execute($update);
+    if (!mysqli_stmt_execute($update)) {
+        throw new Exception('Gagal update stok: ' . mysqli_error($conn));
+    }
 
     // Commit jika kedua query berhasil
     mysqli_commit($conn);
