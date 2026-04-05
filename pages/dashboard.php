@@ -56,15 +56,6 @@ $query_terakhir = mysqli_query($conn, "
 </div>
 <?php endif; ?>
 
-<h5 class="fw-bold mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h5>
-
-<p class="text-muted mb-4">
-    <i class="bi bi-calendar3"></i> 
-    <?= date('l, d F Y') ?> &nbsp;|&nbsp;
-    <i class="bi bi-clock"></i>
-    <span id="jam"></span>
-</p>
-
 <script>
 function updateJam() {
     const now = new Date();
@@ -75,80 +66,63 @@ setInterval(updateJam, 1000);
 updateJam();
 </script>
 
-<!-- Kartu Ringkasan -->
+<div class="page-header">
+    <h5><i class="bi bi-speedometer2"></i> Dashboard</h5>
+    <p>
+        <i class="bi bi-calendar3"></i> <?= date('l, d F Y') ?>
+        &nbsp;&bull;&nbsp;
+        <i class="bi bi-clock"></i> <span id="jam"></span>
+    </p>
+</div>
+
+<!-- Stat Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-sm-6">
-        <div class="card text-white bg-primary h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="fs-2 fw-bold">
-                        <?= $total_barang ?>
-                        <?php if (($stok_habis + $stok_menipis_count) > 0): ?>
-                            <span class="badge bg-danger fs-6 align-middle border border-white" title="Perlu Perhatian">
-                                <i class="bi bi-exclamation-circle"></i> <?= $stok_habis + $stok_menipis_count ?>
-                            </span>
-                        <?php endif; ?>
-                    </div>
-                    <div>Total Barang</div>
-                </div>
-                <i class="bi bi-archive fs-1 opacity-50"></i>
+        <div class="stat-card">
+            <div class="stat-card-icon purple">
+                <i class="bi bi-archive"></i>
             </div>
-            <div class="card-footer">
-                <a href="/sim_persedian_barang/pages/data_barang.php" class="text-white text-decoration-none">
-                    Lihat detail <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
+            <div class="stat-card-value"><?= $total_barang ?></div>
+            <div class="stat-card-label">Total Barang</div>
+            <a href="/sim_persedian_barang/pages/data_barang.php" class="stat-card-link">
+                Lihat detail →
+            </a>
         </div>
     </div>
-
     <div class="col-md-3 col-sm-6">
-        <div class="card text-white bg-success h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="fs-2 fw-bold"><?= $total_supplier ?></div>
-                    <div>Total Supplier</div>
-                </div>
-                <i class="bi bi-truck fs-1 opacity-50"></i>
+        <div class="stat-card">
+            <div class="stat-card-icon emerald">
+                <i class="bi bi-truck"></i>
             </div>
-            <div class="card-footer">
-                <a href="/sim_persedian_barang/pages/data_supplier.php" class="text-white text-decoration-none">
-                    Lihat detail <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
+            <div class="stat-card-value"><?= $total_supplier ?></div>
+            <div class="stat-card-label">Total Supplier</div>
+            <a href="/sim_persedian_barang/pages/data_supplier.php" class="stat-card-link">
+                Lihat detail →
+            </a>
         </div>
     </div>
-
     <div class="col-md-3 col-sm-6">
-        <div class="card text-white bg-info h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="fs-2 fw-bold"><?= $total_masuk ?></div>
-                    <div>Barang Masuk</div>
-                </div>
-                <i class="bi bi-box-arrow-in-down fs-1 opacity-50"></i>
+        <div class="stat-card">
+            <div class="stat-card-icon blue">
+                <i class="bi bi-box-arrow-in-down"></i>
             </div>
-            <div class="card-footer">
-                <a href="/sim_persedian_barang/pages/barang_masuk.php" class="text-white text-decoration-none">
-                    Lihat detail <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
+            <div class="stat-card-value"><?= $total_masuk ?></div>
+            <div class="stat-card-label">Barang Masuk</div>
+            <a href="/sim_persedian_barang/pages/barang_masuk.php" class="stat-card-link">
+                Lihat detail →
+            </a>
         </div>
     </div>
-
     <div class="col-md-3 col-sm-6">
-        <div class="card text-white bg-danger h-100">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="fs-2 fw-bold"><?= $total_keluar ?></div>
-                    <div>Barang Keluar</div>
-                </div>
-                <i class="bi bi-box-arrow-up fs-1 opacity-50"></i>
+        <div class="stat-card">
+            <div class="stat-card-icon rose">
+                <i class="bi bi-box-arrow-up"></i>
             </div>
-            <div class="card-footer">
-                <a href="/sim_persedian_barang/pages/barang_keluar.php" class="text-white text-decoration-none">
-                    Lihat detail <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
+            <div class="stat-card-value"><?= $total_keluar ?></div>
+            <div class="stat-card-label">Barang Keluar</div>
+            <a href="/sim_persedian_barang/pages/barang_keluar.php" class="stat-card-link">
+                Lihat detail →
+            </a>
         </div>
     </div>
 </div>

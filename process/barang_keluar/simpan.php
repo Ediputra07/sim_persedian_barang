@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../../includes/auth_check.php';
 require_once __DIR__ . '/../../config/database.php';
 
-// Hanya user dengan role 'kasir' atau 'owner' yang bisa input barang keluar
-if (!in_array($_SESSION['role'], ['kasir', 'owner'])) {
+// Hanya user dengan role 'kasir' yang bisa input barang keluar
+if ($_SESSION['role'] !== 'kasir') {
     $_SESSION['error'] = "Anda tidak memiliki akses untuk melakukan aksi ini.";
     header('Location: /sim_persedian_barang/pages/dashboard.php');
     exit();
