@@ -46,7 +46,7 @@ $barang_list = mysqli_query($conn, "SELECT * FROM barang WHERE jumlah_stok > 0 O
     <?php if (mysqli_num_rows($result) > 0): ?>
         <?php while ($row = mysqli_fetch_assoc($result)): ?>
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-start border-danger border-4">
+            <div class="transaction-card keluar">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <h6 class="fw-bold"><?= htmlspecialchars($row['nama_barang']) ?></h6>
