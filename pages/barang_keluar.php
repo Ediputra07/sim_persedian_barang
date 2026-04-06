@@ -55,11 +55,6 @@ $barang_list = mysqli_query($conn, "SELECT * FROM barang WHERE jumlah_stok > 0 O
                     <p class="mb-1 text-muted small">
                         <i class="bi bi-calendar"></i> <?= format_tanggal($row['tanggal_keluar']) ?>
                     </p>
-                    <?php if (!empty($row['keterangan'])): ?>
-                    <p class="mb-0 text-muted small">
-                        <i class="bi bi-chat-left-text"></i> <?= htmlspecialchars($row['keterangan']) ?>
-                    </p>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -113,11 +108,6 @@ $barang_list = mysqli_query($conn, "SELECT * FROM barang WHERE jumlah_stok > 0 O
                               value="<?= date('Y-m-d') ?>"
                               max="<?= date('Y-m-d') ?>" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Keterangan</label>
-                        <textarea name="keterangan" class="form-control" rows="2" 
-                                placeholder="Contoh: Rusak, Kadaluarsa, Terjual, dll"></textarea>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -152,7 +142,6 @@ function konfirmasiSimpan() {
     const barang = document.getElementById('selectBarang');
     const jumlah = document.getElementById('inputJumlah');
     const tanggal = form.querySelector('input[name="tanggal_keluar"]');
-    const keterangan = form.querySelector('textarea[name="keterangan"]');
 
     // 1. Validasi Input Kosong
     if (!barang.value || !jumlah.value || !tanggal.value) {
@@ -192,14 +181,12 @@ function konfirmasiSimpan() {
     // Ambil detail data untuk ditampilkan di popup
     const namaBarangTeks = barang.options[barang.selectedIndex].text;
     const namaBarang = namaBarangTeks.split('(')[0].trim();
-    const keteranganValue = keterangan.value.trim() || '-';
 
     const detailHtml = `
         <div style="text-align: left; padding: 0 1rem;">
             <p class="mb-1"><strong>Nama Barang:</strong><br>${namaBarang}</p>
             <p class="mb-1"><strong>Jumlah:</strong><br>${jumlah.value}</p>
             <p class="mb-1"><strong>Tanggal:</strong><br>${tanggal.value}</p>
-            <p class="mb-0"><strong>Keterangan:</strong><br>${keteranganValue}</p>
         </div>
     `;
 
