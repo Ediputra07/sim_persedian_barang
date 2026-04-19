@@ -91,6 +91,17 @@ $password = ''; // password MySQL kamu
 $database = 'inventtrack_pro';
 ```
 
+**4b. (Opsional) Import data dummy realistis**
+
+Jika ingin testing dengan data yang lebih banyak (100 supplier, 100 barang, 100 transaksi masuk, 100 transaksi keluar):
+
+- Buka phpMyAdmin → pilih database `inventtrack_pro`
+- Klik tab **Import**
+- Pilih file `data_realistis.sql` dari folder project
+- Klik **Go**
+
+> ⚠️ File ini akan mengosongkan data lama pada tabel supplier, barang, barang_masuk, dan barang_keluar. Akun user tidak akan terhapus.
+
 **5. Jalankan aplikasi**
 
 Buka browser → akses: http://localhost/sim_persedian_barang
