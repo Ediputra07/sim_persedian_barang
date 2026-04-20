@@ -115,7 +115,7 @@ INSERT INTO supplier (nama_supplier, kontak, alamat) VALUES
 ('CV Sumber Makmur', '08133556551', 'Jl. Gajah Mada No. 33, Nganjuk');
 
 -- 100 Data Barang (stok awal 0, akan update dari barang_masuk)
-INSERT INTO barang (nama_barang, jenis_barang, harga_barang, jumlah_stok, id_supplier) VALUES
+INSERT INTO barang (nama_barang, deskripsi, harga_barang, jumlah_stok, id_supplier) VALUES
 ('Laptop Lenovo ThinkPad E14', 'Elektronik', 12000000, 0, 86),
 ('Laptop Asus VivoBook 14', 'Elektronik', 8500000, 0, 15),
 ('Laptop HP Pavilion 15', 'Elektronik', 10500000, 0, 73),
