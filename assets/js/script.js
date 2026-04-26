@@ -8,3 +8,12 @@ document.querySelectorAll('form').forEach(function(form) {
         }
     });
 });
+
+function updateJam() {
+    const elJam = document.getElementById('jam');
+    if (elJam) {
+        elJam.textContent = new Date().toLocaleTimeString('id-ID');
+    }
+}
+setInterval(updateJam, 1000);
+updateJam();
