@@ -11,6 +11,8 @@
 
 InvenTrack Pro adalah aplikasi web berbasis PHP Native untuk membantu UMKM mengelola persediaan barang secara efisien. Dikembangkan sebagai proyek mata kuliah Implementasi, Pengukuran, dan Penjaminan Perangkat Lunak — Semester 4.
 
+[Live Demo](https://inventrack-k4.infinityfree.io/sim_persedian_barang)
+
 ---
 
 ## Fitur Utama
